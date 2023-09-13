@@ -27,12 +27,17 @@ class BoldSectionPlugin(AbstractParsingPlugin):
             if self._is_document_bold_section(element.html_tag.bs4):
                 to_be_returned.append(element)
             else:
-                continue # or pass as unclaimed?
+                continue # or append as unclaimed?
 
         return to_be_returned
 
     def _is_document_bold_section(self, tag: bs4.Tag) -> bool:
-        return tag.name == "b" or tag["font-weight"] == "700"
+      if tag.name == "b":
+        return True
+      try:
+        return tag["font-weight"] == "700"
+      except:
+        return False
 
     def _handle_document_bold_section(
         self,
