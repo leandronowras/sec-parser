@@ -35,3 +35,6 @@ class ContentlessElement(AbstractSemanticElement):
 
 class InvalidTitleLevelError(SecParserValueError):
     pass
+
+class BoldElement(AbstractSemanticElement):
+  pass
