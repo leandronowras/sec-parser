@@ -38,11 +38,3 @@ class BoldSectionPlugin(AbstractParsingPlugin):
         return tag["font-weight"] == "700"
       except:
         return False
-
-    def _handle_document_bold_section(
-        self,
-        elements: list[AbstractSemanticElement],
-        index: int,
-    ) -> tuple[AbstractSemanticElement, bool]:
-      # i dont get the index yet
-        return BoldElement(elements[0].html_tag), True
