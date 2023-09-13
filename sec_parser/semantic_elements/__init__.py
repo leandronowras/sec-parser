@@ -10,6 +10,7 @@ from sec_parser.semantic_elements.semantic_elements import (
     TextElement,
     TitleElement,
     UnclaimedElement,
+    BoldElement
 )
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     "TitleElement",
     "InvalidTitleLevelError",
     "ContentlessElement",
+    "BoldElement"
 ]

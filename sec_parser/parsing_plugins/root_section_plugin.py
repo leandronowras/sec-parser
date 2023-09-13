@@ -25,21 +25,26 @@ class RootSectionPlugin(AbstractParsingPlugin):
         skip_next_element = False
 
         for i, element in enumerate(elements):
+          # element ta dentro da lista de elements e POR ENQUANTO, so tem unclaimed
             if skip_next_element:
                 skip_next_element = False
                 continue
 
             if self._is_document_root_section(element.html_tag.bs4):
                 root_section_element, should_skip = self._handle_document_root_section(
+                    # pega o parametro elements e o index do loop
+                    # ta certo isso?
                     elements, i,
                 )
                 to_be_returned.append(root_section_element)
                 skip_next_element = should_skip
-            elif self._contains_document_root_section(element.html_tag.bs4):
+            elif self._contains_document_root_section(element.html_tag.bs4): #pega a tag html
                 modified_element = self._remove_inner_document_root_section(element)
                 to_be_returned.append(modified_element)
             else:
                 to_be_returned.append(element)
+
+            # obs: em momento nenhum converteu, ou seja, dentro dessa lista q tem a lista dos Unclaimeds
 
         return to_be_returned
 

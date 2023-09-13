@@ -22,26 +22,17 @@ class BoldSectionPlugin(AbstractParsingPlugin):
         self._already_ran = True
 
         to_be_returned: list[AbstractSemanticElement] = []
-        skip_next_element = False
 
         for i, element in enumerate(elements):
-            if skip_next_element:
-                skip_next_element = False
-                continue
-
             if self._is_document_bold_section(element.html_tag.bs4):
-                bold_section_element, should_skip = self._handle_document_bold_section(
-                    elements, i,
-                )
-                to_be_returned.append(bold_section_element)
-                skip_next_element = should_skip
-            else:
                 to_be_returned.append(element)
+            else:
+                continue # or pass as unclaimed?
 
         return to_be_returned
 
     def _is_document_bold_section(self, tag: bs4.Tag) -> bool:
-        return tag.name == "b"
+        return tag.name == "b" or tag["font-weight"] == "700"
 
     def _handle_document_bold_section(
         self,
