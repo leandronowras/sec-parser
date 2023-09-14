@@ -2,7 +2,7 @@ import pytest
 from sec_parser.parsing_engine.html_parser import HtmlParser
 from sec_parser.semantic_elements.abstract_semantic_elements import AbstractSemanticElement
 from sec_parser.semantic_elements.semantic_elements import (
-    BoldElement,
+    HighlightedElement,
     UnclaimedElement,
 )
 from tests.unit.parsing_plugins._utils import get_elements_from_html
@@ -22,8 +22,8 @@ from sec_parser.parsing_engine.html_tag import HtmlTag
             """, 
             [
                 # expected to ignore what is not bold
-                BoldElement,
-                BoldElement,
+                HighlightedElement,
+                HighlightedElement,
             ],
             ["b", "p", "p"],
         )
@@ -37,7 +37,7 @@ def test_bold_section_plugin(html_str, expected_types, expected_tags):
     elements: list[AbstractSemanticElement]= []
 
     for element in html_to_htmltag:
-      elements.append(BoldElement(element))
+      elements.append(HighlightedElement(element))
     # --
     plugin = HighlightedPlugin()
 
@@ -69,8 +69,8 @@ def test_bold_section_plugin(html_str, expected_types, expected_tags):
             """, 
             [
                 # expected to ignore what is not bold
-                BoldElement,
-                BoldElement,
+                HighlightedElement,
+                HighlightedElement,
             ],
         )
     ],
@@ -83,7 +83,7 @@ def test_ranking_of_bold_section_plugin(html_str, expected_types):
     elements: list[AbstractSemanticElement]= []
 
     for element in html_to_htmltag:
-      elements.append(BoldElement(element))
+      elements.append(HighlightedElement(element))
     # --
     plugin = HighlightedPlugin()
 
