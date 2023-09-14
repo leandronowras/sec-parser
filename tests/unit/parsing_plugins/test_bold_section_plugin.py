@@ -57,9 +57,8 @@ def test_bold_section_plugin(html_str, expected_types, expected_tags):
         assert ele.html_tag.bs4.name == expected_tag
 
 
-# test html tags ranking
 @pytest.mark.parametrize(
-    "html_str, expected_types, expected_tags",
+    "html_str, expected_types",
     [
         (
             """<b>bold text with bold tag</b>
@@ -73,11 +72,10 @@ def test_bold_section_plugin(html_str, expected_types, expected_tags):
                 BoldElement,
                 BoldElement,
             ],
-            ["b", "p", "p"],
         )
     ],
 )
-def test_ranking_of_bold_section_plugin(html_str):
+def test_ranking_of_bold_section_plugin(html_str, expected_types):
     # Arrange
     # -- my helper because get_elements_from_html only parses to Unclaimed
     to_parser = HtmlParser()
@@ -102,4 +100,9 @@ def test_ranking_of_bold_section_plugin(html_str):
     assert plugin.element_ranking[0][1][0] == plugin.BOLD_TAG_RANKING
     assert plugin.element_ranking[1][1][0] == plugin.ITALIC_RANKING
     assert plugin.element_ranking[2][1][0] == plugin.HIGH_FONT_WEIGHT_RANKING
+
+    for ele, expected_type in zip(
+        processed_elements, expected_types
+    ):
+        assert isinstance(ele, expected_type)
 
