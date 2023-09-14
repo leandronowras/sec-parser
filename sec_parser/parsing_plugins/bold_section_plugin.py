@@ -4,14 +4,17 @@ import bs4
 
 from sec_parser.parsing_plugins.abstract_parsing_plugin import AbstractParsingPlugin
 from sec_parser.semantic_elements.semantic_elements import (
-    AbstractSemanticElement,
-    BoldElement
+    AbstractSemanticElement
 )
 
-
+# change name to HighlightedPlugin?
 class BoldSectionPlugin(AbstractParsingPlugin):
     def __init__(self) -> None:
         self._already_ran = False
+        self.element_ranking = []
+        self.BOLD_TAG_RANKING = 2
+        self.HIGH_FONT_WEIGHT_RANKING = 3
+        self.ITALIC_RANKING = 1
 
     def apply(
         self,
@@ -24,17 +27,40 @@ class BoldSectionPlugin(AbstractParsingPlugin):
         to_be_returned: list[AbstractSemanticElement] = []
 
         for i, element in enumerate(elements):
-            if self._is_document_bold_section(element.html_tag.bs4):
-                to_be_returned.append(element)
-            else:
-                continue # or append as unclaimed?
+          ranking = [0]  #list to make it mutable
+          ranking[0] = 0
+          # better name: is_highlighted?
+          is_bold = [
+              self._has_bold_tag(element.html_tag.bs4, ranking),
+              self._has_font_weight(element.html_tag.bs4, ranking),
+              self._has_italic_tag(element.html_tag.bs4, ranking),
+              ]
+          if any(is_bold):
+            self.element_ranking.append([element, ranking])
+            to_be_returned.append(element)
 
         return to_be_returned
 
-    def _is_document_bold_section(self, tag: bs4.Tag) -> bool:
+
+    def _has_bold_tag(self, tag: bs4.Tag, ranking: list[int]) -> bool:
       if tag.name == "b":
+        ranking[0] = ranking[0] + self.BOLD_TAG_RANKING
         return True
+      return False
+
+    def _has_font_weight(self, tag: bs4.Tag, ranking: list[int]) -> bool:
       try:
-        return tag["font-weight"] == "700"
+        has_high_font_weight = tag["font-weight"] == "700"
+        if has_high_font_weight:
+          ranking[0] = ranking[0] + self.HIGH_FONT_WEIGHT_RANKING
+          return True
+        return False
       except:
         return False
+
+    def _has_italic_tag(self, tag: bs4.Tag, ranking: list[int]) -> bool:
+      if tag.name == "i":
+        ranking[0] = ranking[0] + self.ITALIC_RANKING
+        return True
+      return False
+

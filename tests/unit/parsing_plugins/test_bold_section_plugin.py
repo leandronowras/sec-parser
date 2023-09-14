@@ -55,3 +55,51 @@ def test_bold_section_plugin(html_str, expected_types, expected_tags):
     ):
         assert isinstance(ele, expected_type)
         assert ele.html_tag.bs4.name == expected_tag
+
+
+# test html tags ranking
+@pytest.mark.parametrize(
+    "html_str, expected_types, expected_tags",
+    [
+        (
+            """<b>bold text with bold tag</b>
+            <p>normal text</p>
+            <i>italic text with italic tag</i>
+            <p>normal text</p>
+            <p font-weight='700'>bold text with font-weight</p>
+            """, 
+            [
+                # expected to ignore what is not bold
+                BoldElement,
+                BoldElement,
+            ],
+            ["b", "p", "p"],
+        )
+    ],
+)
+def test_ranking_of_bold_section_plugin(html_str):
+    # Arrange
+    # -- my helper because get_elements_from_html only parses to Unclaimed
+    to_parser = HtmlParser()
+    html_to_htmltag = to_parser.get_root_tags(html_str) # list of class bs htmltag
+    elements: list[AbstractSemanticElement]= []
+
+    for element in html_to_htmltag:
+      elements.append(BoldElement(element))
+    # --
+    plugin = BoldSectionPlugin()
+
+    # Act
+    processed_elements = plugin.apply(elements)
+    second_run = plugin.apply(processed_elements)
+
+
+    # Assert
+    assert second_run is None  # Plugin should only run once
+    
+    # TODO: better way to get the ranking
+    print(plugin.element_ranking)
+    assert plugin.element_ranking[0][1][0] == plugin.BOLD_TAG_RANKING
+    assert plugin.element_ranking[1][1][0] == plugin.ITALIC_RANKING
+    assert plugin.element_ranking[2][1][0] == plugin.HIGH_FONT_WEIGHT_RANKING
+
