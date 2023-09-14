@@ -6,7 +6,7 @@ from sec_parser.semantic_elements.semantic_elements import (
     UnclaimedElement,
 )
 from tests.unit.parsing_plugins._utils import get_elements_from_html
-from sec_parser.parsing_plugins.bold_section_plugin import BoldSectionPlugin
+from sec_parser.parsing_plugins.bold_section_plugin import HighlightedPlugin
 from bs4 import BeautifulSoup as bs
 from sec_parser.parsing_engine.html_tag import HtmlTag
 
@@ -39,7 +39,7 @@ def test_bold_section_plugin(html_str, expected_types, expected_tags):
     for element in html_to_htmltag:
       elements.append(BoldElement(element))
     # --
-    plugin = BoldSectionPlugin()
+    plugin = HighlightedPlugin()
 
     # Act
     processed_elements = plugin.apply(elements)
@@ -85,7 +85,7 @@ def test_ranking_of_bold_section_plugin(html_str, expected_types):
     for element in html_to_htmltag:
       elements.append(BoldElement(element))
     # --
-    plugin = BoldSectionPlugin()
+    plugin = HighlightedPlugin()
 
     # Act
     processed_elements = plugin.apply(elements)

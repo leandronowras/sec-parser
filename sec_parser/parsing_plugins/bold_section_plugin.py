@@ -8,7 +8,7 @@ from sec_parser.semantic_elements.semantic_elements import (
 )
 
 # change name to HighlightedPlugin?
-class BoldSectionPlugin(AbstractParsingPlugin):
+class HighlightedPlugin(AbstractParsingPlugin):
     def __init__(self) -> None:
         self._already_ran = False
         self.element_ranking = []
@@ -29,13 +29,12 @@ class BoldSectionPlugin(AbstractParsingPlugin):
         for i, element in enumerate(elements):
           ranking = [0]  #list to make it mutable inside methods
           ranking[0] = 0
-          # better name: is_highlighted?
-          is_bold = [
+          is_highlighted = [
               self._has_bold_tag(element.html_tag.bs4, ranking),
               self._has_font_weight(element.html_tag.bs4, ranking),
               self._has_italic_tag(element.html_tag.bs4, ranking),
               ]
-          if any(is_bold):
+          if any(is_highlighted):
             self.element_ranking.append([element, ranking])
             to_be_returned.append(element)
 
