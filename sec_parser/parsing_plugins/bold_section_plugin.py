@@ -27,7 +27,7 @@ class BoldSectionPlugin(AbstractParsingPlugin):
         to_be_returned: list[AbstractSemanticElement] = []
 
         for i, element in enumerate(elements):
-          ranking = [0]  #list to make it mutable
+          ranking = [0]  #list to make it mutable inside methods
           ranking[0] = 0
           # better name: is_highlighted?
           is_bold = [
