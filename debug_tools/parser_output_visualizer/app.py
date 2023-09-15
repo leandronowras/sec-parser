@@ -1,5 +1,10 @@
 from collections import Counter
 import random
+from sec_parser.parsing_engine.html_parser import HtmlParser
+from sec_parser.parsing_plugins import text_plugin
+from sec_parser.parsing_plugins.highlighted_section_plugin import HighlightedPlugin
+from sec_parser.parsing_plugins.root_section_plugin import RootSectionPlugin
+from sec_parser.semantic_elements.semantic_elements import HighlightedElement, RootSectionElement, UnclaimedElement
 import streamlit as st
 from _ui import (
     st_hide_streamlit_element,
@@ -175,6 +180,79 @@ if selected_step == 2:
         with st.expander(expander_title, expanded=do_expand_all):
             render_semantic_element(element)
 
+# my version of step 2
 if selected_step == 3:
-    for root_node in tree.root_nodes:
-        render_tree_node(root_node)
+  # classe q faz ficar com o emoji
+  def my_get_pretty_class_name(element_cls, element=None):
+    def get_emoji(cls):
+      return {
+          sp.HighlightedElement: "📢",
+          }.get(cls, "?")
+
+    emoji = get_emoji(element_cls)
+    level = ""
+    if element and hasattr(element, "level") and element.level > 1:
+      level = f" (Level {element.level})"
+    class_name = f"**{add_spaces(element_cls.__name__)}{level}**"
+    pretty_name = f"{emoji} {class_name}"
+    return pretty_name
+
+
+
+  for element in [HighlightedElement, RootSectionElement, UnclaimedElement]: # parse cada tag para o elemento OBS: o unclaimed fica por ultimo?
+    expander_title = my_get_pretty_class_name(HighlightedElement) # oq faz alterar o titulo eh o primeiro # adicionar nome pra classe?
+    with st.expander(expander_title, expanded=do_expand_all):
+      raw_html =  """<b>bold text with bold tag</b>
+            <p>normal text</p>
+            <i>italic text with italic tag</i>
+            <p>normal text</p>
+            <p font-weight='700'>bold text with font-weight</p>
+            """
+      parser = HtmlParser()
+      my_plugin = HighlightedPlugin()
+      bs4_class = parser.get_root_tags(raw_html)
+
+      semantic_elements_list = []
+      for i in range(len(bs4_class)):
+        semantic_elements_list.append(element(bs4_class[i]))
+
+      applied_elements = set(my_plugin.apply(semantic_elements_list)) # reclama mas funciona
+
+      final_return = set()
+      # o problema eh q so ta usando meu plugin, retorna os outros pq nao tem validacao
+      # todo: REORGANIZAR a classe e botar o for in element so no final
+      # pq nao renderiza um unclaimed?
+      for applied_element in applied_elements:
+        print(applied_element.__class__.__name__)
+        if applied_element.__class__.__name__ not in final_return:
+          final_return.add(applied_element)
+
+      # ideia 1, fazer um dicionario com o nome e a instancia da classe
+      final_return_dic = {}
+      for applied_element in applied_elements:
+        if not final_return_dic.get(applied_element.__class__.__name__):
+          final_return_dic[applied_element.__class__.__name__] = applied_element
+
+      for element in final_return_dic.values():
+        render_semantic_element(element) 
+
+
+
+
+# notes:
+# o tree builder receber lista de semantic ELements (nao fiz o do highlight ainda)
+# o retorno da build eh uma arvore semantica q so tem self.root_nodes do tipo list[TreeNode]
+# TreeNode tem propriedades: parents, children, setter, metodos: add_child, add_children, remove_child
+# a tree recebe o retorno do tree builder
+
+# para cada TreeNode, renderiza TreeNode (funcao definida no proprio app.py)
+
+# todo:
+# instanciar o builder como uma lista do meu highlighted plugin
+# tentar fazer isso aparecer na ui
+
+
+
+# obs:
+# ta tudo unclaimed pq tinha uma funcao q tranformava tudo como unclaimed
+# achar esse funcao

@@ -40,6 +40,7 @@ from sec_parser.semantic_elements.semantic_elements import (
     TextElement,
     TitleElement,
     UnclaimedElement,
+    HighlightedElement
 )
 from sec_parser.semantic_tree_transformations.rules import (
     AbstractRule,
@@ -99,4 +100,5 @@ __all__ = [
     "get_value_or_env_var",
     "parse_latest",
     "validate_sections",
+    "HighlightedElement"
 ]

@@ -37,4 +37,15 @@ class InvalidTitleLevelError(SecParserValueError):
     pass
 
 class HighlightedElement(AbstractSemanticElement):
-  pass
+  MIN_LEVEL = 1
+  class_name = "HighlightedElement"
+
+  def __init__(self, html_tag: HtmlTag, *, level: int = MIN_LEVEL) -> None:
+    super().__init__(html_tag)
+
+    if level < self.MIN_LEVEL:
+      msg = f"Level must be equal or greater than {self.MIN_LEVEL}"
+      raise InvalidTitleLevelError(msg)
+    self.level = level
+
+

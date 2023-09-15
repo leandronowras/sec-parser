@@ -47,3 +47,4 @@ def get_semantic_elements(html: str) -> list[sp.AbstractSemanticElement]:
 def get_semantic_tree(elements: list[sp.AbstractSemanticElement]) -> sp.SemanticTree:
     tree_builder = sp.TreeBuilder()
     return tree_builder.build(elements)
+

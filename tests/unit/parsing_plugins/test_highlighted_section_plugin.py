@@ -6,7 +6,7 @@ from sec_parser.semantic_elements.semantic_elements import (
     UnclaimedElement,
 )
 from tests.unit.parsing_plugins._utils import get_elements_from_html
-from sec_parser.parsing_plugins.bold_section_plugin import HighlightedPlugin
+from sec_parser.parsing_plugins.highlighted_section_plugin import HighlightedPlugin
 from bs4 import BeautifulSoup as bs
 from sec_parser.parsing_engine.html_tag import HtmlTag
 
